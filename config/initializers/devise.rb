@@ -8,8 +8,8 @@ Devise.setup do |config|
   # confirmation, reset password and unlock tokens in the database.
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
-  # config.secret_key = 'cf5a03cf6d5ea8830d2e1919b031db3631b4f2e3c7066b97b2ee3974bbc33405cacadff2f52e44e35e219799e4bfc5721b400aa4b2857a45cd15ae5bf1172b4e'
-  
+  config.secret_key = 'cf5a03cf6d5ea8830d2e1919b031db3631b4f2e3c7066b97b2ee3974bbc33405cacadff2f52e44e35e219799e4bfc5721b400aa4b2857a45cd15ae5bf1172b4e'
+
   # ==> Controller configuration
   # Configure the parent class to the devise controllers.
   # config.parent_controller = 'DeviseController'
@@ -19,6 +19,18 @@ Devise.setup do |config|
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
   config.mailer_sender = 'please-change-me-at-config-initializers-devise@example.com'
+  # JWT Configuration for Devise
+  # https://medium.com/@mazik.wyry/rails-5-api-jwt-setup-in-minutes-using-devise-71670fd4ed03
+  config.jwt do |jwt|
+    jwt.secret = ENV['DEVISE_JWT_SECRET_KEY']
+    jwt.dispatch_requests = [
+      ['POST', %r{^/login$}]
+    ]
+    jwt.revocation_requests = [
+      ['DELETE', %r{^/logout$}]
+    ]
+    jwt.expiration_time = 1.day.to_i
+  end
 
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Devise::Mailer'
@@ -248,7 +260,7 @@ Devise.setup do |config|
   # should add them to the navigational formats lists.
   #
   # The "*/*" below is required to match Internet Explorer requests.
-  # config.navigational_formats = ['*/*', :html]
+  config.navigational_formats = [] #It will prevent devise from using flash messages which are not present in Rails api mode.
 
   # The default HTTP method used to sign out a resource. Default is :delete.
   config.sign_out_via = :delete
