@@ -19,13 +19,9 @@ services:
     tty: true
   redis:
     image: redis:latest
-    ports:
-      - "6379:6379"
   mysql:
     image: mysql:5.5.59
     restart: always
-    ports:
-      - "3306:3306"
     environment:
       MYSQL_USER: root
       MYSQL_ROOT_PASSWORD: root
