@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::API
+  before_action :configure_permitted_parameters, if: :devise_controller?
+
   def render_resource(resource)
     if resource.errors.empty?
       render json: resource
@@ -18,5 +20,11 @@ class ApplicationController < ActionController::API
         },
       ],
     }, status: :bad_request
+  end
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_in, keys: [:otp_attempt])
   end
 end
