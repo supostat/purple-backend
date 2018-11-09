@@ -15,8 +15,13 @@ services:
       - .:/purple
     depends_on:
       - mysql
+      - mailcatcher
     stdin_open: true
     tty: true
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports:
+      - "1080:1080"
   redis:
     image: redis:latest
   mysql:
