@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::API
   before_action :configure_permitted_parameters, if: :devise_controller?
+  rescue_from ActiveRecord::RecordInvalid, with: :render_unprocessable_entity_response
 
   def render_resource(resource)
     if resource.errors.empty?
@@ -22,9 +23,17 @@ class ApplicationController < ActionController::API
     }, status: :bad_request
   end
 
+  def render_unprocessable_entity_response(exception)
+    render json: {
+      message: "Validation Failed",
+      errors: ValidationErrorsSerializer.new(exception.record).serialize
+    }, status: :unprocessable_entity
+  end
+
   protected
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_in, keys: [:otp_attempt])
+    devise_parameter_sanitizer.permit(:accept_invitation, keys: [:password, :password_confirmation, :auth_code])
   end
 end
