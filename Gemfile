@@ -31,11 +31,15 @@ gem 'devise'
 gem 'devise-jwt', '~> 0.5.8'
 gem 'devise-two-factor'
 gem 'devise_invitable', '~> 1.7.0'
+gem 'barby'
+gem 'rqrcode'
+gem 'active_model_serializers'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'dotenv-rails'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem "pry-rails"
 end
 
 group :development do
