@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users,
+             defaults: {format: :json},
              path: "",
              path_names: {
                sign_in: "login",
@@ -10,11 +11,16 @@ Rails.application.routes.draw do
                sessions: "sessions",
                registrations: "registrations",
              }
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   namespace :api do
     namespace :v1 do
       resources :tests, only: [:index]
+      resources :invites, only: [:index]
+      resources :accept_invites, only: [:index] do
+        collection do
+          post :accept
+        end
+      end
     end
   end
 end
