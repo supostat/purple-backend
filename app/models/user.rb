@@ -1,10 +1,12 @@
 class User < ApplicationRecord
+  include Devise::JWT::RevocationStrategies::JTIMatcher
+
   devise :two_factor_authenticatable,
          :invitable,
          :validatable,
          :jwt_authenticatable,
          otp_secret_encryption_key: ENV["OTP_SECRET_ENCRYPTION_KEY"],
-         jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
+         jwt_revocation_strategy: self
 
   before_invitation_created :enable_two_factor_auth
 
@@ -14,7 +16,7 @@ class User < ApplicationRecord
   attr_accessor :auth_code
 
   def jwt_payload
-    { 'firstName' => first_name, 'surname' => surname, 'role' => role }
+    super.merge({ 'firstName' => first_name, 'surname' => surname, 'role' => role })
   end
 
   def two_factor_code_match
