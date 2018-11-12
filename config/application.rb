@@ -23,6 +23,7 @@ module Purple
     config.load_defaults 5.2
     config.autoload_paths += Dir["#{config.root}/app/services/**/"]
     config.autoload_paths += Dir["#{config.root}/app/serializers/**/"]
+    config.autoload_paths += Dir["#{config.root}/app/page_data/**/"]
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
