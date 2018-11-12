@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
+  rolify
 
   devise :two_factor_authenticatable,
          :invitable,
