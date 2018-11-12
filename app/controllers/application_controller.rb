@@ -1,6 +1,15 @@
 class ApplicationController < ActionController::API
+  include ActionController::MimeResponds
   before_action :configure_permitted_parameters, if: :devise_controller?
   rescue_from ActiveRecord::RecordInvalid, with: :render_unprocessable_entity_response
+
+  rescue_from CanCan::AccessDenied do |exception|
+    respond_to do |format|
+      format.json { head :forbidden, content_type: 'application/json' }
+      format.html { redirect_to main_app.root_url, notice: exception.message }
+      format.js   { head :forbidden, content_type: 'application/json' }
+    end
+  end
 
   def render_resource(resource)
     if resource.errors.empty?

@@ -1,5 +1,5 @@
 class InvitesPageData
-  Result = Struct.new(:success, :users) do
+  Result = Struct.new(:success, :users, :roles, :venues) do
     def success?
       success
     end
@@ -8,7 +8,8 @@ class InvitesPageData
   def all
     success = true
     users = User.created_by_invite
-
-    Result.new(success, users)
+    roles = Role::ROLES
+    venues = Venue.all
+    Result.new(success, users, roles, venues)
   end
 end

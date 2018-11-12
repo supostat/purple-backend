@@ -7,17 +7,27 @@ class User < ApplicationRecord
          :validatable,
          :jwt_authenticatable,
          otp_secret_encryption_key: ENV["OTP_SECRET_ENCRYPTION_KEY"],
-         jwt_revocation_strategy: self
+         jwt_revocation_strategy: self,
+         require_password_on_accepting: true
 
   before_invitation_created :enable_two_factor_auth
+  validate :two_factor_code_match, if: :accepting_invitation
+
+  validates_associated :roles
+  has_and_belongs_to_many :work_venues, class_name: 'Venue', :join_table => :users_venues
 
   validates :email, presence: true
-  validate :two_factor_code_match
 
   attr_accessor :auth_code
+  attr_reader :accepting_invitation
+
+  def accept_invitation!
+    @accepting_invitation = true
+    super
+  end
 
   def jwt_payload
-    super.merge({ 'firstName' => first_name, 'surname' => surname, 'role' => role })
+    super.merge({ 'firstName' => first_name, 'surname' => surname })
   end
 
   def two_factor_code_match

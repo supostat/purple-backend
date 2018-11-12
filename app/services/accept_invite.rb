@@ -8,7 +8,7 @@ class AcceptInvite
     password = params.fetch(:password)
     password_confirmation = params.fetch(:passwordConfirmation)
     user = User.accept_invitation!(invitation_token: params[:invitationToken], password: password, password_confirmation: password_confirmation, auth_code: auth_code)
-    unless user.valid?
+    unless user.errors.empty?
       raise ActiveRecord::RecordInvalid.new(user)
     end
     user
