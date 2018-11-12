@@ -34,6 +34,7 @@ gem 'devise_invitable', '~> 1.7.0'
 gem 'barby'
 gem 'rqrcode'
 gem 'active_model_serializers'
+gem 'rolify'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
