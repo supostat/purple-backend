@@ -1,1 +1,1 @@
-web: ./script/puma-start.sh
+web: bundle exec rails s
