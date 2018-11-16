@@ -21,6 +21,7 @@ module Purple
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
+    config.autoload_paths += Dir["#{config.root}/lib/**/"]
     config.autoload_paths += Dir["#{config.root}/app/services/**/"]
     config.autoload_paths += Dir["#{config.root}/app/serializers/**/"]
     config.autoload_paths += Dir["#{config.root}/app/page_data/**/"]
