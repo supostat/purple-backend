@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_12_094634) do
+ActiveRecord::Schema.define(version: 2019_01_23_130047) do
 
   create_table "roles", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
@@ -21,6 +21,19 @@ ActiveRecord::Schema.define(version: 2018_11_12_094634) do
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
     t.index ["name"], name: "index_roles_on_name"
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource_type_and_resource_id"
+  end
+
+  create_table "user_transitions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "to_state", null: false
+    t.text "metadata"
+    t.integer "sort_key", null: false
+    t.bigint "user_id"
+    t.boolean "most_recent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "most_recent"], name: "index_user_transitions_parent_most_recent", unique: true
+    t.index ["user_id", "sort_key"], name: "index_user_transitions_parent_sort", unique: true
+    t.index ["user_id"], name: "index_user_transitions_on_user_id"
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -73,4 +86,5 @@ ActiveRecord::Schema.define(version: 2018_11_12_094634) do
     t.index ["name"], name: "index_venues_on_name"
   end
 
+  add_foreign_key "user_transitions", "users"
 end
