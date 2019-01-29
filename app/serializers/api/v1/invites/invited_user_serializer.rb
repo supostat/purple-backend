@@ -2,19 +2,29 @@ class Api::V1::Invites::InvitedUserSerializer < ActiveModel::Serializer
   attributes \
     :id,
     :email,
-    :roles,
+    :role,
     :invitedAt,
-    :venuesIds
+    :venuesIds,
+    :invitationStatus,
+    :inviterFullName
 
   def invitedAt
-    object.invitation_sent_at
+    object.invitation_sent_at.iso8601
   end
 
   def venuesIds
     object.work_venues.pluck(:id)
   end
 
-  def roles
-    object.roles_name
+  def role
+    object.roles_name[0]
+  end
+
+  def invitationStatus
+    object.invitation_status
+  end
+
+  def inviterFullName
+    object.invited_by&.full_name
   end
 end
