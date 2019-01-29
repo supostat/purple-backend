@@ -3,18 +3,21 @@ class Api::V1::InvitesController < ApplicationController
   load_and_authorize_resource :user
 
   def index
-    result = InvitesPageData.new.all
+    result = InvitesPageData.new(params: params).all
+    pagination = Pagination.new(records: result.invited_users, current_page: page_from_params).for_load_more
     if result.success?
       render json: {
         invitedUsers: ActiveModel::Serializer::CollectionSerializer.new(
-          result.users,
+          pagination[:records],
           serializer: Api::V1::Invites::InvitedUserSerializer,
         ),
         roles: result.roles,
+        invitationStatuses: result.invitation_statuses,
         venues: ActiveModel::Serializer::CollectionSerializer.new(
           result.venues,
           serializer: Api::V1::Invites::VenueSerializer,
         ),
+        pagination: pagination[:pagination],
       }, status: 200
     end
   end
@@ -23,10 +26,7 @@ class Api::V1::InvitesController < ApplicationController
     result = CreateInvite.new(inviter: current_user).call(params: params)
     if result.success?
       render json: {
-        invitedUsers: ActiveModel::Serializer::CollectionSerializer.new(
-          result.users,
-          serializer: Api::V1::Invites::InvitedUserSerializer,
-        ),
+        invitedUser: Api::V1::Invites::InvitedUserSerializer.new(result.invited_user)
       }, status: 200
     else
       render json: {
@@ -37,5 +37,11 @@ class Api::V1::InvitesController < ApplicationController
 
   def current_ability
     @current_ability ||= ::InvitesAbility.new(current_user)
+  end
+
+  private
+
+  def page_from_params
+    params[:page] || 1
   end
 end
