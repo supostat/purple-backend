@@ -2,9 +2,12 @@ class Api::V1::Users::UserSerializer < ActiveModel::Serializer
   attributes \
     :id,
     :email,
-    :roles,
+    :role,
     :invitedAt,
-    :venuesIds
+    :venuesIds,
+    :firstName,
+    :surname,
+    :status
 
   def invitedAt
     object.invitation_sent_at
@@ -14,7 +17,19 @@ class Api::V1::Users::UserSerializer < ActiveModel::Serializer
     object.work_venues.pluck(:id)
   end
 
-  def roles
-    object.roles_name
+  def role
+    object.roles_name[0]
+  end
+
+  def firstName
+    object.first_name
+  end
+
+  def surname
+    object.surname
+  end
+
+  def status
+    object.current_state
   end
 end

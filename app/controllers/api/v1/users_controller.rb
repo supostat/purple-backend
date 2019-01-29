@@ -19,6 +19,27 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
+  def show
+    result = UserProfilePageData.new(user_id: params.fetch(:id)).all
+
+    render json: {
+      user: Api::V1::UserProfile::UserSerializer.new(result.user),
+      venues: ActiveModel::Serializer::CollectionSerializer.new(
+        result.venues,
+        serializer: Api::V1::UserProfile::VenueSerializer,
+      ),
+      roles: result.roles,
+    }, status: 200
+  end
+
+  def history
+    render json: {
+      history: [],
+    }
+  end
+
+  private
+
   def current_ability
     @current_ability ||= ::InvitesAbility.new(current_user)
   end
