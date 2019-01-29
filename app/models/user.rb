@@ -1,10 +1,13 @@
 class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
   include Statesman::Adapters::ActiveRecordQueries
+  include SearchCop
 
   INVITATION_REVOKED_STATUS = "revoked"
   INVITATION_PENDING_STATUS = "pending"
   INVITATION_ACCEPTED_STATUS = "accepted"
+
+  INVITATION_STATUSES = [INVITATION_REVOKED_STATUS, INVITATION_PENDING_STATUS, INVITATION_ACCEPTED_STATUS]
 
   INVITATION_STATUSES_TEXT = {
     INVITATION_REVOKED_STATUS => "Revoked",
@@ -23,9 +26,13 @@ class User < ApplicationRecord
          require_password_on_accepting: true,
          validate_on_invite: true
 
+  search_scope :search_email do
+    attributes :email
+  end
+
   before_invitation_created :enable_two_factor_auth
 
-  has_and_belongs_to_many :work_venues, class_name: 'Venue', :join_table => :users_venues
+  has_and_belongs_to_many :work_venues, class_name: "Venue", :join_table => :users_venues
   has_many :user_transitions, autosave: false
 
   validate :two_factor_code_match, if: :accepting_invitation
@@ -59,7 +66,7 @@ class User < ApplicationRecord
   end
 
   def jwt_payload
-    super.merge({ 'firstName' => first_name, 'surname' => surname })
+    super.merge({"firstName" => first_name, "surname" => surname})
   end
 
   def two_factor_code_match
