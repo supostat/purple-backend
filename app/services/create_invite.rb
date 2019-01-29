@@ -1,5 +1,5 @@
 class CreateInvite
-  Result = Struct.new(:success, :user, :role, :api_errors) do
+  Result = Struct.new(:success, :invited_user, :role, :api_errors) do
     def success?
       success
     end
@@ -10,24 +10,31 @@ class CreateInvite
   end
 
   def call(params:)
+    invited_user = nil
+    success = false
+    api_errors = nil
     email = params.fetch(:email)
     first_name = params.fetch(:firstName)
     surname = params.fetch(:surname)
     role = params.fetch(:role)
-    venues_ids = params.fetch(:venuesIds)
+    venues_ids = params.fetch(:venues)
     venues = Venue.where(id: venues_ids)
-    user = nil
-    success = false
+
     ActiveRecord::Base.transaction do
-      user = User.invite!(email: email, first_name: first_name, surname: surname, work_venues: venues) do |u|
+      invited_user = User.invite!({email: email, first_name: first_name, surname: surname, work_venues: venues}, inviter) do |u|
         u.skip_invitation = true
       end
-      role = user.add_role(role)
-      success = user.valid? && role.valid?
+      role = invited_user.add_role(role)
+      success = invited_user.errors.empty? && role.errors.empty?
       raise ActiveRecord::Rollback unless success
-      user.deliver_invitation
+      invited_user.deliver_invitation
     end
-    Result.new(success, user, role, CreateInviteApiErrors.new(user: user, role: role))
+
+    unless success == true
+      api_errors = CreateInviteApiErrors.new(invited_user: invited_user, role: role)
+    end
+
+    Result.new(success, invited_user, role, api_errors)
   end
 
   private
