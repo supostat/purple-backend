@@ -1,15 +1,25 @@
 class InvitesPageData
-  Result = Struct.new(:success, :users, :roles, :venues) do
+  Result = Struct.new(:success, :invited_users, :roles, :venues, :invitation_statuses) do
     def success?
       success
     end
   end
 
+  def initialize(params:)
+    @params = params
+  end
+
   def all
     success = true
-    users = User.created_by_invite
-    roles = Role::ROLES
+    invited_users = InvitesIndexQuery.new(params: params).all
+
+    roles = Role::ROLES_TITLES
     venues = Venue.all
-    Result.new(success, users, roles, venues)
+    invitation_statuses = User::INVITATION_STATUSES_TEXT
+    Result.new(success, invited_users, roles, venues, invitation_statuses)
   end
+
+  private
+
+  attr_reader :page, :params
 end
