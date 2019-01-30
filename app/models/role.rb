@@ -1,11 +1,14 @@
 class Role < ApplicationRecord
 has_and_belongs_to_many :users, :join_table => :users_roles
 
-ROLES = ["admin", "manager"]
+ADMIN_ROLE = "admin"
+MANAGER_ROLE = "manager"
+
+ROLES = [ADMIN_ROLE, MANAGER_ROLE]
 
 ROLES_TITLES = {
-  "admin": "Admin",
-  "manager": "Manager",
+  ADMIN_ROLE: "Admin",
+  MANAGER_ROLE: "Manager",
 }
 
 belongs_to :resource,

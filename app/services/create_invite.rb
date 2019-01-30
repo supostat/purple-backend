@@ -5,8 +5,9 @@ class CreateInvite
     end
   end
 
-  def initialize(inviter: nil)
+  def initialize(inviter: nil, invitiation_delivery_service: DeliverInviteEmail.new)
     @inviter = inviter
+    @invitiation_delivery_service = invitiation_delivery_service
   end
 
   def call(params:)
@@ -14,11 +15,10 @@ class CreateInvite
     success = false
     api_errors = nil
     email = params.fetch(:email)
-    first_name = params.fetch(:firstName)
+    first_name = params.fetch(:first_name)
     surname = params.fetch(:surname)
     role = params.fetch(:role)
-    venues_ids = params.fetch(:venues)
-    venues = Venue.where(id: venues_ids)
+    venues = params.fetch(:venues)
 
     ActiveRecord::Base.transaction do
       invited_user = User.invite!({email: email, first_name: first_name, surname: surname, work_venues: venues}, inviter) do |u|
@@ -27,7 +27,7 @@ class CreateInvite
       role = invited_user.add_role(role)
       success = invited_user.errors.empty? && role.errors.empty?
       raise ActiveRecord::Rollback unless success
-      invited_user.deliver_invitation
+      invitiation_delivery_service.call(user: invited_user)
     end
 
     unless success == true
@@ -38,6 +38,5 @@ class CreateInvite
   end
 
   private
-
-  attr_reader :inviter
+  attr_reader :inviter, :invitiation_delivery_service
 end

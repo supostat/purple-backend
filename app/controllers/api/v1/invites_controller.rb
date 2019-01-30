@@ -50,7 +50,12 @@ class Api::V1::InvitesController < ApplicationController
   private
 
   def invited_user_params
-    params.fetch(:invitedUser)
+    params.fetch(:invitedUser).transform_keys do |key|
+      key.to_s.underscore.to_sym
+    end
+  end
+
+  def invite_user_params_key_transform
   end
 
   def page_from_params

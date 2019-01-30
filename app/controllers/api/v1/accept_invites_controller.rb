@@ -23,8 +23,9 @@ class Api::V1::AcceptInvitesController < ApplicationController
   end
 
   private
-
   def invitation_token_from_params
-    params.fetch(:invitationToken)
+    params.fetch(:invitationToken).transform_keys do |key|
+      key.to_s.underscore.to_sym
+    end
   end
 end

@@ -4,10 +4,11 @@ class AcceptInvite
   end
 
   def call(params:)
-    auth_code = params.fetch(:authCode)
+    auth_code = params.fetch(:auth_code)
     password = params.fetch(:password)
-    password_confirmation = params.fetch(:passwordConfirmation)
-    user = User.accept_invitation!(invitation_token: params[:invitationToken], password: password, password_confirmation: password_confirmation, auth_code: auth_code)
+    password_confirmation = params.fetch(:password_confirmation)
+    invitation_token = params.fetch(:invitation_token)
+    user = User.accept_invitation!(invitation_token: invitation_token, password: password, password_confirmation: password_confirmation, auth_code: auth_code)
     unless user.errors.empty?
       raise ActiveRecord::RecordInvalid.new(user)
     end
