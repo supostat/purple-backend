@@ -34,7 +34,7 @@ class User < ApplicationRecord
 
   has_and_belongs_to_many :work_venues, class_name: "Venue", :join_table => :users_venues
   has_many :user_transitions, autosave: false
-
+  belongs_to :invited_by, class_name: "User"
   validate :two_factor_code_match, if: :accepting_invitation
   validates_associated :roles
   validates :first_name, presence: true
