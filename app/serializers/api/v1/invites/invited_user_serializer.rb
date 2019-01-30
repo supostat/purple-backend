@@ -17,7 +17,7 @@ class Api::V1::Invites::InvitedUserSerializer < ActiveModel::Serializer
   end
 
   def role
-    object.roles_name[0]
+    object.roles.pluck(:name)[0]
   end
 
   def invitationStatus

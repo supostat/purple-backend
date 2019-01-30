@@ -3,10 +3,10 @@ class InvitesIndexQuery
     @params = params
   end
 
-  def all
-    query = User.created_by_invite
+  def all(order: :desc)
+    query = User.includes([:roles, :work_venues, :invited_by]).created_by_invite.order(created_at: order)
     if params[:venues].present?
-      query = query.joins(:work_venues).where(users_venues: {venue_id: params[:venues]}).distinct
+      query = query.joins(:work_venues).where(users_venues: {venue_id: params[:venues]})
     end
     if params[:role].present?
       query = query.with_role(params[:role])
