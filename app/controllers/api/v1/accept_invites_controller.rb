@@ -15,7 +15,7 @@ class Api::V1::AcceptInvitesController < ApplicationController
       user = AcceptInvite.new(user: user).call(params: accept_invite_params)
       sign_in(user)
     else
-      render json: {erros: "error"}, status: 422
+      render json: { erros: "error" }, status: 422
     end
   end
 
