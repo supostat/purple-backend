@@ -1,14 +1,11 @@
 class Api::V1::AcceptInvitesController < ApplicationController
   def index
-    result = AcceptInvitePageData.new(invitation_token: invitation_token_from_params).all
-    if result.success?
-      render json: {
-        invitedUser: Api::V1::AcceptInvites::UserSerializer.new(result.user),
-        base64Png: result.base64Png,
-      }
-    else
-      raise "qweqwe"
-    end
+    result = AcceptInvitePageData.new(invitation_token: invitation_token_from_params).call
+
+    render json: {
+      invitedUser: Api::V1::AcceptInvites::UserSerializer.new(result.user),
+      base64Png: result.base64Png,
+    }
   end
 
   def accept
