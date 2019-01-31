@@ -61,20 +61,19 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   # mail catcher
-  # config.action_mailer.default_url_options = {
-  #   host: ENV['HTTP_HOST'] || 'localhost'
-  # }
-  config.reload_classes_only_on_change = false
-  # config.action_mailer.delivery_method = :smtp
-  # config.action_mailer.smtp_settings = { :address => "mailcatcher", :port => 1025 }
-  config.action_mailer.default_url_options = { :host => 'localhost:8080' }
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    :user_name => "42a61b3469a4c4",
-    :password => "bfc00d2a2f23e6",
-    :address => "smtp.mailtrap.io",
-    :domain => "smtp.mailtrap.io",
-    :port => "2525",
-    :authentication => :cram_md5,
+  config.action_mailer.default_url_options = {
+    host: ENV['HTTP_HOST'] || 'localhost:8080'
   }
+  config.reload_classes_only_on_change = false
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = { :address => "mailcatcher", :port => 1025 }
+
+  # config.action_mailer.smtp_settings = {
+  #   :user_name => "42a61b3469a4c4",
+  #   :password => "bfc00d2a2f23e6",
+  #   :address => "smtp.mailtrap.io",
+  #   :domain => "smtp.mailtrap.io",
+  #   :port => "2525",
+  #   :authentication => :cram_md5,
+  # }
 end
