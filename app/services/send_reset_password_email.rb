@@ -6,7 +6,7 @@ class SendResetPasswordEmail
   def call
     user = User.find_by(email: email)
     if user.present?
-      a = user.send_reset_password_instructions
+      user.send_reset_password_instructions
     else
       # do nothing
     end
