@@ -11,9 +11,7 @@ class AcceptInvitePageData
       raise ActiveRecord::RecordNotFound
     end
 
-    issuer = ENV.fetch("APP_NAME")
-    label = "#{issuer}:#{user.email}"
-    tfo_uri = user.otp_provisioning_uri(label, issuer: issuer)
+    tfo_uri = GetOtpProvisioningURI.new(app_name: ENV.fetch("APP_NAME")).for_user(user)
     base64_png = Base64QrCodeFromString.call(string: tfo_uri)
 
     Result.new(user, base64_png)
