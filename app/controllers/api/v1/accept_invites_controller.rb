@@ -12,10 +12,10 @@ class Api::V1::AcceptInvitesController < ApplicationController
   end
 
   def accept
-    invitation_token = params.fetch(:invitationToken)
+    invitation_token = accept_invite_params.fetch(:invitation_token)
     user = User.find_by_invitation_token(invitation_token, true)
     if user.present? && user.invited_to_sign_up? && user.created_by_invite?
-      user = AcceptInvite.new(user: user).call(params: params)
+      user = AcceptInvite.new(user: user).call(params: accept_invite_params)
       sign_in(user)
     else
       render json: {erros: "error"}, status: 422
@@ -24,8 +24,15 @@ class Api::V1::AcceptInvitesController < ApplicationController
 
   private
   def invitation_token_from_params
-    params.fetch(:invitationToken).transform_keys do |key|
-      key.to_s.underscore.to_sym
-    end
+    params.fetch(:invitationToken)
+  end
+
+  def accept_invite_params
+    {
+      auth_code: params.fetch(:authCode),
+      invitation_token: params.fetch(:invitationToken),
+      password: params.fetch(:password),
+      password_confirmation: params.fetch(:passwordConfirmation),
+    }
   end
 end
