@@ -7,8 +7,8 @@ MANAGER_ROLE = "manager"
 ROLES = [ADMIN_ROLE, MANAGER_ROLE]
 
 ROLES_TITLES = {
-  ADMIN_ROLE: "Admin",
-  MANAGER_ROLE: "Manager",
+  ADMIN_ROLE => "Admin",
+  MANAGER_ROLE => "Manager",
 }
 
 belongs_to :resource,
