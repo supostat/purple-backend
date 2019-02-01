@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
+  default_url_options :host => ENV["HTTP_HOST"] || "localhost:8080"
   devise_for :users,
+             skip: [:passwords],
              defaults: {format: :json},
              path: "",
              path_names: {
@@ -11,7 +13,9 @@ Rails.application.routes.draw do
                sessions: "sessions",
                registrations: "registrations",
              }
-
+  as :user do
+    get "reset-password", :to => "devise/passwords#edit"
+  end
   namespace :api do
     namespace :v1 do
       resources :tests, only: [:index]
