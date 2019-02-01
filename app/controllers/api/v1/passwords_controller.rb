@@ -4,8 +4,14 @@ class Api::V1::PasswordsController < ApplicationController
   end
 
   def send_reset_password_email
-    SendResetPasswordEmail.new(email: email_from_params).call
-    render json: {}, status: 200
+    result = SendResetPasswordEmail.new(email: email_from_params).call
+    if result.success?
+      render json: {}, status: 200
+    else
+      render json: {
+        errors: result.api_errors.errors,
+      }, status: 422
+    end
   end
 
   def reset_password
