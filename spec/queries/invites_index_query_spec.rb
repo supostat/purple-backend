@@ -356,7 +356,8 @@ RSpec.describe "InvitesIndexQuery" do
             password_confirmation: 'new_password',
           }
         )
-        _result
+        raise "invite failed" unless _result.success?
+        _result.user
       end
       let(:invited_user_venues) { [invited_user_venue.id] }
 

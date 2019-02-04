@@ -16,14 +16,24 @@ class Api::V1::AcceptInvitesController < ApplicationController
 
   def accept
     invitation_token = accept_invite_params.fetch(:invitation_token)
-    user = User.find_by_invitation_token(invitation_token, true)
-    if user.present? && user.invited_to_sign_up? && user.created_by_invite?
-      render json: { erros: "error" }, status: 422
-      return
-    end
 
-    user = AcceptInvite.new(user: user).call(params: accept_invite_params)
-    sign_in(user)
+    # devise finder used to match by hidden raw_invitation_token field
+    only_valid = true
+    user = User.find_by_invitation_token(invitation_token, only_valid)
+
+    if user.present? && user.invited_to_sign_up? && user.created_by_invite?
+      result = AcceptInvite.new(user: user).call(params: accept_invite_params)
+
+      if result.success?
+        sign_in(result.user)
+        render json: {}, status: :ok
+      else
+        api_errors = result.api_errors
+        render json: { errors: api_errors.errors }, status: 422
+      end
+    else
+      render json: {}, status: :unauthorized
+    end
   end
 
   private

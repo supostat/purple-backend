@@ -19,7 +19,7 @@ RSpec.describe 'Accepting invite index endpoint' do
       venues_ids: [invited_user_venue],
     })
     raise "Couldn't invite user" unless _result.success?
-    _result.invited_user
+    _result
   end
   let(:user) do
     created_by_invite_result.invited_user

@@ -10,13 +10,13 @@ RSpec.describe 'Accept invite endpoint' do
       invitationToken: invitation_token,
       authCode: auth_code,
       password: password,
-      passwordConfirmation: password
+      passwordConfirmation: password_confirmation,
     }
   end
   let(:inviter) { FactoryBot.create(:user) }
   let(:invited_user_venue) { FactoryBot.create(:venue) }
   let(:mock_invitiation_delivery_service) { double("mock_invitiation_delivery_service") }
-  let(:user) do
+  let(:invite_user_response) do
     CreateInvite.new(
       inviter: inviter,
       invitiation_delivery_service: mock_invitiation_delivery_service,
@@ -26,11 +26,13 @@ RSpec.describe 'Accept invite endpoint' do
       surname: 'snakes',
       role: Role::MANAGER_ROLE,
       venues_ids: [invited_user_venue.id],
-    }).invited_user
+    })
   end
+  let(:user) { invite_user_response.invited_user }
   let(:auth_code) { user.current_otp }
   let(:invitation_token) { user.raw_invitation_token }
   let(:password) { 'password' }
+  let(:password_confirmation) { password }
 
   before do
     allow(mock_invitiation_delivery_service).to receive(:call)
@@ -42,15 +44,15 @@ RSpec.describe 'Accept invite endpoint' do
   context 'token is not valid' do
     let(:invitation_token) { 'invalid-token' }
 
-    specify 'response should be Unprocessable Entity' do
-      expect{ response.status }.to eq(unprocessable_status)
+    specify 'response should be unauthorised' do
+      expect(response.status).to eq(unauthorised_status)
     end
   end
 
   context 'token is valid' do
     describe 'response' do
       specify 'should be success with empty body' do
-        expect(response.status).to eq(ok_no_content_status)
+        expect(response.status).to eq(ok_status)
       end
 
       specify 'should supply Authorization token in header' do
@@ -72,12 +74,21 @@ RSpec.describe 'Accept invite endpoint' do
       specify 'response should be Unprocessable Entity' do
         expect(response.status).to eq(unprocessable_status)
       end
+
+      specify 'should return error json' do
+        json_response = JSON.parse(response.body)
+        expect(json_response).to eq({
+          "errors" => {
+            "passwordConfirmation" => ["doesn't match Password"]
+          }
+        })
+      end
     end
   end
 
   context 'invite is already accepted' do
     before do
-      AcceptInvite.new(user: user).call(
+      result = AcceptInvite.new(user: user).call(
         params: {
           invitation_token: invitation_token,
           auth_code: auth_code,
@@ -85,6 +96,7 @@ RSpec.describe 'Accept invite endpoint' do
           password_confirmation: 'new_password',
         }
       )
+      raise "Couldn't accept invite" unless result.success?
     end
 
     specify 'before call invite should be accepted' do
@@ -92,7 +104,7 @@ RSpec.describe 'Accept invite endpoint' do
     end
 
     specify 'response should be Unprocessable Entity' do
-      expect(response.status).to eq(unprocessable_status)
+      expect(response.status).to eq(unauthorised_status)
     end
   end
 
@@ -109,7 +121,7 @@ RSpec.describe 'Accept invite endpoint' do
     end
 
     specify 'response should be Unprocessable Entity' do
-      expect(response.status).to eq(unprocessable_status)
+      expect(response.status).to eq(unauthorised_status)
     end
   end
 
@@ -124,10 +136,6 @@ RSpec.describe 'Accept invite endpoint' do
 
   def ok_status
     200
-  end
-
-  def ok_no_content_status
-    204
   end
 
   def unauthorised_status
