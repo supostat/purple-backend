@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::API
   include ActionController::MimeResponds
   before_action :configure_permitted_parameters, if: :devise_controller?
-  rescue_from ActiveRecord::RecordInvalid, with: :render_unprocessable_entity_response
+  rescue_from ActiveRecord::RecordInvalid, with: :render_server_error_response
 
   rescue_from CanCan::AccessDenied do |exception|
     respond_to do |format|
@@ -31,11 +31,8 @@ class ApplicationController < ActionController::API
     }, status: :bad_request
   end
 
-  def render_unprocessable_entity_response(exception)
-    render json: {
-      message: "Validation Failed",
-      errors: ValidationErrorsSerializer.new(exception.record).serialize
-    }, status: :unprocessable_entity
+  def render_server_error_response(exception)
+    render json: {}, status: :internal_server_error
   end
 
   protected

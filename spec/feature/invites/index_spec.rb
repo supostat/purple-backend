@@ -7,7 +7,7 @@ RSpec.describe 'Accepting invite index endpoint' do
   let(:inviter) { FactoryBot.create(:user) }
   let(:invited_user_venue) { FactoryBot.create(:venue).id }
   let(:mock_invitiation_delivery_service) { double("mock_invitiation_delivery_service") }
-  let(:user) do
+  let(:created_by_invite_result) do
     _result = CreateInvite.new(
       inviter: inviter,
       invitiation_delivery_service: mock_invitiation_delivery_service,
@@ -20,6 +20,12 @@ RSpec.describe 'Accepting invite index endpoint' do
     })
     raise "Couldn't invite user" unless _result.success?
     _result.invited_user
+  end
+  let(:user) do
+    created_by_invite_result.invited_user
+  end
+  let(:invitation_token) do
+    user.invitation_token
   end
 
   before do
@@ -43,13 +49,14 @@ RSpec.describe 'Accepting invite index endpoint' do
     end
 
     context 'when token is valid' do
-      let(:invitation_token) { user.raw_invitation_token }
       let(:user_tfo_uri) do
-        GetOtpProvisioningURI.new(app_name: ENV.fetch("APP_NAME")).for_user(user)
+        GetOtpProvisioningURI.new(
+          app_name: ENV.fetch("APP_NAME")
+        ).for_user(user)
       end
 
       describe 'result' do
-        it 'should be succes' do
+        it 'should be success' do
           expect(response.status).to eq(ok_status)
         end
 
@@ -72,7 +79,7 @@ RSpec.describe 'Accepting invite index endpoint' do
       let(:invitation_token) { 'invalid_token' }
 
       specify 'supply QR code and user data' do
-        expect{ peform_call }.to raise_error(ActiveRecord::RecordNotFound)
+        expect(response.status).to eq(forbidden_status)
       end
     end
   end
@@ -92,5 +99,9 @@ RSpec.describe 'Accepting invite index endpoint' do
 
   def unauthorised_status
     401
+  end
+
+  def forbidden_status
+    403
   end
 end

@@ -43,7 +43,7 @@ RSpec.describe 'Accept invite endpoint' do
     let(:invitation_token) { 'invalid-token' }
 
     specify 'response should be Unprocessable Entity' do
-      expect(response.status).to eq(unprocessable_status)
+      expect{ response.status }.to eq(unprocessable_status)
     end
   end
 
