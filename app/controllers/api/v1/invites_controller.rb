@@ -1,6 +1,5 @@
 class Api::V1::InvitesController < ApplicationController
   before_action :authenticate_user!
-  load_and_authorize_resource :user
 
   def index
     current_ability.authorize!(:view, :invites_index)
@@ -45,6 +44,12 @@ class Api::V1::InvitesController < ApplicationController
         errors: result.api_errors.errors,
       }, status: 422
     end
+  end
+
+  def revoke
+    invited_user = User.find_by!(id: params.fetch(:id))
+    RevokeInvite.new(invited_user: invited_user, requester: current_user).call
+    render json: {}, status: :ok
   end
 
   def current_ability
