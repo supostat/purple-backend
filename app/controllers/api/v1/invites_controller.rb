@@ -52,7 +52,6 @@ class Api::V1::InvitesController < ApplicationController
   end
 
   private
-
   def invited_user_params
     invited_user_data = params.fetch(:invitedUser)
     {
