@@ -60,9 +60,6 @@ class Api::V1::InvitesController < ApplicationController
     }
   end
 
-  def invite_user_params_key_transform
-  end
-
   def page_from_params
     request.query_parameters[:page] || 1
   end
