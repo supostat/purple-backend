@@ -8,13 +8,15 @@ RSpec.describe 'Revoke invite endpoint' do
   let(:response) { post(url, params)}
   let(:perform_call) { response }
   let(:params) { {} }
-  let(:inviter) { FactoryBot.create(:user, roles: [manager_role]) }
+  let(:inviter) { FactoryBot.create(:user, roles: [admin_role]) }
   let(:invited_user_venue) { FactoryBot.create(:venue) }
   let(:mock_invitiation_delivery_service) { double("mock_invitiation_delivery_service") }
   let(:manager_role) { Role.create!(name: Role::MANAGER_ROLE) }
+  let(:admin_role) { Role.create!(name: Role::ADMIN_ROLE) }
+  let(:seed_roles) { [admin_role, manager_role]}
 
   before do
-    manager_role
+    seed_roles
     allow(mock_invitiation_delivery_service).to receive(:call)
     set_authorization_header(inviter)
   end
