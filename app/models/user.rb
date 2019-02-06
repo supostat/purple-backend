@@ -41,10 +41,21 @@ class User < ApplicationRecord
   validates :first_name, presence: true
   validates :surname, presence: true
   validates :email, presence: true
-  # validates :invitation_revoked_at, presence: true, if: :invitation_token.empty?
+  validate :one_role
 
   attr_accessor :auth_code
   attr_reader :accepting_invitation
+
+  # validation
+  def one_role
+    if roles.count != 1
+      errors.add(:roles, 'must have one role')
+    end
+  end
+
+  def role
+    roles.first.name
+  end
 
   def full_name
     "#{first_name} #{surname}"
