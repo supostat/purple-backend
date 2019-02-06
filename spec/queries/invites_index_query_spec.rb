@@ -348,7 +348,7 @@ RSpec.describe "InvitesIndexQuery" do
         _result = service_result.invited_user
         _invitation_token = _result.raw_invitation_token
         auth_code = _result.current_otp
-        _result = AcceptInvite.new(user: _result).call(
+        _result = AcceptInvite.new.call(
           params: {
             invitation_token: _invitation_token,
             auth_code: auth_code,

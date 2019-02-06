@@ -4,9 +4,6 @@ class AcceptInvite
       success
     end
   end
-  def initialize(user:)
-    @user = user
-  end
 
   def call(params:)
     auth_code = params.fetch(:auth_code)
@@ -24,8 +21,4 @@ class AcceptInvite
 
     Result.new(result, user, api_errors)
   end
-
-  private
-
-  attr_reader :user
 end

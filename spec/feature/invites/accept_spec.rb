@@ -88,7 +88,7 @@ RSpec.describe 'Accept invite endpoint' do
 
   context 'invite is already accepted' do
     before do
-      result = AcceptInvite.new(user: user).call(
+      result = AcceptInvite.new.call(
         params: {
           invitation_token: invitation_token,
           auth_code: auth_code,

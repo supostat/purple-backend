@@ -22,7 +22,7 @@ class Api::V1::AcceptInvitesController < ApplicationController
     user = User.find_by_invitation_token(invitation_token, only_valid)
 
     if user.present? && user.invited_to_sign_up? && user.created_by_invite?
-      result = AcceptInvite.new(user: user).call(params: accept_invite_params)
+      result = AcceptInvite.new.call(params: accept_invite_params)
 
       if result.success?
         sign_in(result.user)
