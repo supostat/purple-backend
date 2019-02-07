@@ -33,6 +33,10 @@ Rails.application.routes.draw do
       resources :users, only: [:index, :show] do
         member do
           get :history
+          post :update_personal_details
+          post :update_access_details
+          post :disable
+          post :enable
         end
       end
 
