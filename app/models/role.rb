@@ -20,7 +20,6 @@ validates :resource_type,
           :inclusion => { :in => Rolify.resource_types },
           :allow_nil => true
 
-validates :name,
-          :inclusion => { :in => ROLES}
+validates :name, presence: true, :inclusion => { :in => ROLES }
 scopify
 end
