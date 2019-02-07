@@ -16,7 +16,6 @@ class Pagination
         showing: showing,
         next: pagy.next,
         page: pagy.page,
-        pagy: pagy,
         norm: normalize_current_page(count, current_page, per_page),
       },
     }
