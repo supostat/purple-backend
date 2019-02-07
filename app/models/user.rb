@@ -2,6 +2,7 @@ class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
   include Statesman::Adapters::ActiveRecordQueries
   include SearchCop
+  rolify
 
   INVITATION_REVOKED_STATUS = "revoked"
   INVITATION_PENDING_STATUS = "pending"
@@ -15,7 +16,8 @@ class User < ApplicationRecord
     INVITATION_ACCEPTED_STATUS => "Accepted",
   }
 
-  rolify
+  DISABLED_STATUS = "disabled"
+  ENABLED_STATUS = "enabled"
 
   devise :two_factor_authenticatable,
          :invitable,
@@ -34,14 +36,20 @@ class User < ApplicationRecord
   before_invitation_created :enable_two_factor_auth
 
   has_and_belongs_to_many :work_venues, class_name: "Venue", :join_table => :users_venues
-  has_many :user_transitions, autosave: false
   belongs_to :invited_by, class_name: "User", :optional => true
+  belongs_to :disabled_by_user, class_name: "User", optional: true
+  has_many :history, class_name: "UsersHistory"
+
   validate :two_factor_code_match, if: :accepting_invitation
   validates_associated :roles
   validates :first_name, presence: true
   validates :surname, presence: true
   validates :email, presence: true
   validate :one_role
+  validates :disabled_by_user, :disabled_at, :disabled_reason, presence: true, if: :any_of_disabled_present?
+  validates :would_rehire, inclusion: { in: [true, false], message: 'is required' }
+
+  # validates :invitation_revoked_at, presence: true, if: :invitation_token.empty?
 
   attr_accessor :auth_code
   attr_reader :accepting_invitation
@@ -61,6 +69,14 @@ class User < ApplicationRecord
     "#{first_name} #{surname}"
   end
 
+  def disabled?
+    disabled_by_user.present? && disabled_at.present?
+  end
+
+  def flagged?
+    disabled? && would_rehire == false
+  end
+
   def invitation_revoked?
     invitation_token.blank? && invitation_revoked_at.present?
   end
@@ -70,6 +86,10 @@ class User < ApplicationRecord
       return INVITATION_REVOKED_STATUS
     end
     invited_to_sign_up? ? INVITATION_PENDING_STATUS : INVITATION_ACCEPTED_STATUS
+  end
+
+  def status
+    disabled? ? DISABLED_STATUS : ENABLED_STATUS
   end
 
   def accept_invitation!
@@ -87,6 +107,10 @@ class User < ApplicationRecord
         errors.add(:auth_code, "doesn't match")
       end
     end
+  end
+
+  def any_of_disabled_present?
+    disabled_at.present? || disabled_by_user.present? || disabled_reason.present?
   end
 
   def enable_two_factor_auth
