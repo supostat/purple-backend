@@ -7,7 +7,12 @@ class Api::V1::UserProfile::UserSerializer < ActiveModel::Serializer
     :venuesIds,
     :firstName,
     :surname,
-    :status
+    :status,
+    :flagged,
+    :enabled,
+    :disabled,
+    :disabledReason,
+    :disabledBy
 
   def invitedAt
     object.invitation_sent_at
@@ -31,5 +36,25 @@ class Api::V1::UserProfile::UserSerializer < ActiveModel::Serializer
 
   def status
     object.status
+  end
+
+  def enabled
+    !object.disabled?
+  end
+
+  def disabled
+    object.disabled?
+  end
+
+  def disabledReason
+    object.disabled_reason
+  end
+
+  def disabledBy
+    object.disabled_by_user&.full_name
+  end
+
+  def flagged
+    object.flagged?
   end
 end
