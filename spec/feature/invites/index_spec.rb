@@ -16,7 +16,7 @@ RSpec.describe 'Accepting invite index endpoint' do
       first_name: 'fake',
       surname: 'snakes',
       role: Role::MANAGER_ROLE,
-      venues: [invited_user_venue],
+      venues_ids: [invited_user_venue],
     })
     raise "Couldn't invite user" unless _result.success?
     _result.invited_user
