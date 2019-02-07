@@ -5,7 +5,7 @@ RSpec.describe 'Accepting invite index endpoint' do
 
   let(:url) { url_helpers.api_v1_accept_invites_path(params) }
   let(:inviter) { FactoryBot.create(:user) }
-  let(:invited_user_venue) { FactoryBot.create(:venue) }
+  let(:invited_user_venue) { FactoryBot.create(:venue).id }
   let(:mock_invitiation_delivery_service) { double("mock_invitiation_delivery_service") }
   let(:user) do
     _result = CreateInvite.new(

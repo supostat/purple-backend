@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe "InvitesIndexQuery" do
   let(:query) { InvitesIndexQuery.new(params: params) }
   let(:result) { query.all }
+  let(:work_venues) { FactoryBot.create_list(:venue, 2) }
 
   context 'no filter params are supplied' do
     let(:params) { {} }
@@ -40,11 +41,11 @@ RSpec.describe "InvitesIndexQuery" do
           first_name: 'joe',
           surname: 'lampost',
           role: Role::MANAGER_ROLE,
-          venues: invite_venues,
+          venues_ids: invite_venues,
         }
       end
       let(:invite_user_email) { 'joe.lpost@fake.bom' }
-      let(:invite_venues) { [venue]}
+      let(:invite_venues) { [venue.id]}
 
       before do
         allow(dummy_delivery_service).to receive(:call)
@@ -87,11 +88,11 @@ RSpec.describe "InvitesIndexQuery" do
           first_name: 'joe',
           surname: 'lampost',
           role: invite_user_role,
-          venues: invite_venues,
+          venues_ids: invite_venues,
         }
       end
       let(:invite_user_email) { 'joe.lpost@fake.bom' }
-      let(:invite_venues) { [venue]}
+      let(:invite_venues) { [venue.id]}
       let(:manager_role) { Role.create!(name: Role::MANAGER_ROLE) }
       let(:admin_role) { Role.create!(name: Role::ADMIN_ROLE) }
       let(:roles) { [manager_role, admin_role] }
@@ -160,11 +161,11 @@ RSpec.describe "InvitesIndexQuery" do
           first_name: 'joe',
           surname: 'lampost',
           role: invite_user_role,
-          venues: invite_venues,
+          venues_ids: invite_venues,
         }
       end
       let(:invite_user_role) { Role::MANAGER_ROLE }
-      let(:invite_venues) { [venue]}
+      let(:invite_venues) { [venue.id]}
 
       before do
         allow(dummy_delivery_service).to receive(:call)
@@ -229,13 +230,13 @@ RSpec.describe "InvitesIndexQuery" do
           email: invite_user_email,
           first_name: 'joe',
           surname: 'lampost',
-          venues: invite_venues,
+          venues_ids: invite_venues,
           role: invite_user_role,
         }
       end
       let(:invite_user_role) { Role::MANAGER_ROLE }
       let(:invite_user_email) { 'the@bomb.com' }
-      let(:invite_venues) { [invite_user_venue] }
+      let(:invite_venues) { [invite_user_venue.id] }
 
       before do
         allow(dummy_delivery_service).to receive(:call)
@@ -289,7 +290,7 @@ RSpec.describe "InvitesIndexQuery" do
           email: 'invited.user@fake.net',
           first_name: 'd',
           surname: 'user',
-          venues: invited_user_venues,
+          venues_ids: invited_user_venues,
           role: invited_user_role,
         }
       end
@@ -309,7 +310,7 @@ RSpec.describe "InvitesIndexQuery" do
           email: 'revoked.user@fake.net',
           first_name: 'revoked',
           surname: 'user',
-          venues: invited_user_venues,
+          venues_ids: invited_user_venues,
           role: invited_user_role,
         }
       end
@@ -333,7 +334,7 @@ RSpec.describe "InvitesIndexQuery" do
           email: 'accepted.user@fake.net',
           first_name: 'accepted',
           surname: 'user',
-          venues: invited_user_venues,
+          venues_ids: invited_user_venues,
           role: invited_user_role,
         }
       end
@@ -357,7 +358,7 @@ RSpec.describe "InvitesIndexQuery" do
         )
         _result
       end
-      let(:invited_user_venues) { [invited_user_venue] }
+      let(:invited_user_venues) { [invited_user_venue.id] }
 
       before do
         allow(dummy_delivery_service).to receive(:call)
