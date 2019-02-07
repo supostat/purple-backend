@@ -1,13 +1,13 @@
 require "rails_helper"
 
-RSpec.describe Api::V1::PasswordsController, type: :controller do
+RSpec.describe Api::V1::PasswordsController do
   include ActiveSupport::Testing::TimeHelpers
 
-  let(:user) { FactoryBot.create(:user) }
+  let(:user) { FactoryBot.create(:user, work_venues: work_venues) }
+  let(:work_venues) { FactoryBot.create_list(:venue, 10) }
   let(:email_subject) { "Reset password instructions" }
+  let(:valid_email) { user.email }
   let(:invalid_email) { "invalid@email.com" }
-  let(:send_reset_password_email_url) { url_helpers.send_reset_password_email_api_v1_passwords_path }
-  let(:reset_password_url) { url_helpers.reset_password_api_v1_passwords_path }
 
   context "before call" do
     it "no delivered messages should be present" do
@@ -18,15 +18,13 @@ RSpec.describe Api::V1::PasswordsController, type: :controller do
   describe "when send reset password" do
     describe "when email valid" do
       it "should be success" do
-        post :send_reset_password_email, params: {email: user.email}
-
-        json_response = JSON.parse(response.body)
-        expect(json_response).to eq({})
+        post :send_reset_password_email, params: { email: valid_email }
+        expect(body_as_json).to eq({})
         expect(response).to have_http_status(ok_status)
       end
       describe "email" do
         it "with reset password link should be send" do
-          post :send_reset_password_email, params: {email: user.email}
+          post :send_reset_password_email, params: { email: valid_email }
           expect(ActionMailer::Base.deliveries.count).to eq(1)
           mail = ActionMailer::Base.deliveries.last
           expect(mail.subject).to eq(email_subject)
@@ -36,12 +34,12 @@ RSpec.describe Api::V1::PasswordsController, type: :controller do
 
       describe "reset password period" do
         it "should be valid" do
-          post :send_reset_password_email, params: {email: user.email}
+          post :send_reset_password_email, params: { email: valid_email }
           user.reload
           expect(user.reset_password_period_valid?).to eq(true)
         end
         it "after 6 hours should be invalid" do
-          post :send_reset_password_email, params: {email: user.email}
+          post :send_reset_password_email, params: { email: valid_email }
           user.reload
           travel 7.hours
           expect(user.reset_password_period_valid?).to eq(false)
