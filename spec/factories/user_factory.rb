@@ -11,9 +11,16 @@ FactoryBot.define do
     password_confirmation { "password" }
 
     before :create do |user, evaluator|
-      _role = evaluator.role || Role::MANAGER_ROLE
-      _role_model = Role.find_or_create_by(name: _role)
-      user.roles = [_role_model]
+      # prefer explictly roles setting
+      if user.roles.present? && evaluator.role.present?
+        raise 'conflicting attempt to set role and roles'
+      end
+
+      if !user.roles.present?
+        _role = evaluator.role || Role::MANAGER_ROLE
+        _role_model = Role.find_or_create_by(name: _role)
+        user.roles = [_role_model]
+      end
     end
 
     trait :invited do
