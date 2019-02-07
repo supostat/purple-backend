@@ -50,9 +50,14 @@ class Api::V1::InvitesController < ApplicationController
   private
 
   def invited_user_params
-    params.fetch(:invitedUser).transform_keys do |key|
-      key.to_s.underscore.to_sym
-    end
+    invited_user_data = params.fetch(:invitedUser)
+    {
+      email: invited_user_data.fetch(:email),
+      first_name: invited_user_data.fetch(:firstName),
+      surname: invited_user_data.fetch(:surname),
+      role: invited_user_data.fetch(:role),
+      venues_ids: invited_user_data.fetch(:venues),
+    }
   end
 
   def invite_user_params_key_transform
