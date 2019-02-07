@@ -3,7 +3,8 @@ require "rails_helper"
 RSpec.describe ResetPassword, type: :service do
   include ActiveSupport::Testing::TimeHelpers
 
-  let(:user) { FactoryBot.create(:user) }
+  let(:user) { FactoryBot.create(:user, work_venues: work_venues) }
+  let(:work_venues) { FactoryBot.create_list(:venue, 10) }
   let(:service) { ResetPassword.new }
 
   describe "when valid params" do
