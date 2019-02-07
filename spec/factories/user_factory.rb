@@ -15,11 +15,5 @@ FactoryBot.define do
       _role_model = Role.find_or_create_by(name: _role)
       user.roles = [_role_model]
     end
-
-    trait :invited do
-      invitation_created_at { Time.now }
-      invitation_sent_at { Time.now }
-      invitation_token { 'my-fake-token' }
-    end
   end
 end
