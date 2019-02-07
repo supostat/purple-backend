@@ -19,7 +19,7 @@ class CreateInvite
     surname = params.fetch(:surname)
     role = Role.find_by(name: params.fetch(:role))
     roles = [role].compact
-    venues = params.fetch(:venues)
+    work_venues = Venue.where(id: params.fetch(:venues_ids))
 
     ActiveRecord::Base.transaction do
       invited_user = User.invite!(
@@ -27,12 +27,13 @@ class CreateInvite
           email: email,
           first_name: first_name,
           surname: surname,
-          work_venues: venues,
-          roles: roles
+          work_venues: work_venues,
+          roles: roles,
         },
-        inviter) do |u|
-          u.skip_invitation = true
-        end
+        inviter
+      ) do |u|
+        u.skip_invitation = true
+      end
       success = invited_user.errors.empty?
       raise ActiveRecord::Rollback unless success
       invitiation_delivery_service.call(user: invited_user)
@@ -46,5 +47,6 @@ class CreateInvite
   end
 
   private
+
   attr_reader :inviter, :invitiation_delivery_service
 end
