@@ -1,7 +1,8 @@
 require "rails_helper"
 
 RSpec.describe SendResetPasswordEmail, type: :service do
-  let(:user) { FactoryBot.create(:user) }
+  let(:user) { FactoryBot.create(:user, work_venues: work_venues) }
+  let(:work_venues) { FactoryBot.create_list(:venue, 10) }
   let(:valid_email) { user.email }
   let(:invalid_email) { "invalid@email.com" }
   let(:email_subject) { "Reset password instructions" }
