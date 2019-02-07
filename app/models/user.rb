@@ -48,7 +48,7 @@ class User < ApplicationRecord
 
   # validation
   def one_role
-    if roles.count != 1
+    if roles.length != 1
       errors.add(:roles, 'must have one role')
     end
   end
