@@ -1,9 +1,8 @@
 class CreateInviteApiErrors
-  def initialize(invited_user:, role:)
+  def initialize(invited_user:)
     @invited_user = invited_user
-    @role = role
   end
-  attr_reader :invited_user, :role
+  attr_reader :invited_user
 
   def errors
     result = {}
@@ -11,9 +10,7 @@ class CreateInviteApiErrors
     result[:surname] = invited_user.errors[:surname] if invited_user.errors[:surname].present?
     result[:email] = invited_user.errors[:email] if invited_user.errors[:email].present?
     result[:venuesIds] = invited_user.errors[:work_venues] if invited_user.errors[:work_venues].present?
-    if role.present?
-      result[:role] = role.errors[:name] if role.errors[:name].present?
-    end
+    result[:role] = invited_user.errors[:roles] if invited_user.errors[:roles].present?
     result
   end
 end

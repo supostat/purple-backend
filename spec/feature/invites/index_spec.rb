@@ -8,7 +8,7 @@ RSpec.describe 'Accepting invite index endpoint' do
   let(:invited_user_venue) { FactoryBot.create(:venue) }
   let(:mock_invitiation_delivery_service) { double("mock_invitiation_delivery_service") }
   let(:user) do
-    CreateInvite.new(
+    _result = CreateInvite.new(
       inviter: inviter,
       invitiation_delivery_service: mock_invitiation_delivery_service,
     ).call(params: {
@@ -17,7 +17,9 @@ RSpec.describe 'Accepting invite index endpoint' do
       surname: 'snakes',
       role: Role::MANAGER_ROLE,
       venues: [invited_user_venue],
-    }).invited_user
+    })
+    raise "Couldn't invite user" unless _result.success?
+    _result.invited_user
   end
 
   before do

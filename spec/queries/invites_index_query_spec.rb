@@ -92,8 +92,12 @@ RSpec.describe "InvitesIndexQuery" do
       end
       let(:invite_user_email) { 'joe.lpost@fake.bom' }
       let(:invite_venues) { [venue]}
+      let(:manager_role) { Role.create!(name: Role::MANAGER_ROLE) }
+      let(:admin_role) { Role.create!(name: Role::ADMIN_ROLE) }
+      let(:roles) { [manager_role, admin_role] }
 
       before do
+        roles
         allow(dummy_delivery_service).to receive(:call)
         invite_user
       end
