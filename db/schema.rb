@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_25_093254) do
+ActiveRecord::Schema.define(version: 2019_02_05_074645) do
 
   create_table "roles", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
@@ -21,19 +21,6 @@ ActiveRecord::Schema.define(version: 2019_01_25_093254) do
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
     t.index ["name"], name: "index_roles_on_name"
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource_type_and_resource_id"
-  end
-
-  create_table "user_transitions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "to_state", null: false
-    t.text "metadata"
-    t.integer "sort_key", null: false
-    t.bigint "user_id"
-    t.boolean "most_recent"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id", "most_recent"], name: "index_user_transitions_parent_most_recent", unique: true
-    t.index ["user_id", "sort_key"], name: "index_user_transitions_parent_sort", unique: true
-    t.index ["user_id"], name: "index_user_transitions_on_user_id"
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -60,9 +47,27 @@ ActiveRecord::Schema.define(version: 2019_01_25_093254) do
     t.string "invited_by_type"
     t.string "jti", null: false
     t.datetime "invitation_revoked_at"
+    t.datetime "disabled_at"
+    t.bigint "disabled_by_user_id"
+    t.text "disabled_reason"
+    t.boolean "would_rehire", default: true, null: false
+    t.index ["disabled_by_user_id"], name: "index_users_on_disabled_by_user_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["would_rehire"], name: "index_users_on_would_rehire"
+  end
+
+  create_table "users_histories", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "model_key", null: false
+    t.text "old_value"
+    t.text "new_value"
+    t.bigint "user_id", null: false
+    t.bigint "requester_user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["requester_user_id"], name: "index_users_histories_on_requester_user_id"
+    t.index ["user_id"], name: "index_users_histories_on_user_id"
   end
 
   create_table "users_roles", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -87,5 +92,4 @@ ActiveRecord::Schema.define(version: 2019_01_25_093254) do
     t.index ["name"], name: "index_venues_on_name"
   end
 
-  add_foreign_key "user_transitions", "users"
 end
