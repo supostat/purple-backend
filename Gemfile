@@ -39,6 +39,7 @@ gem 'cancancan', '~> 2.0'
 gem 'statesman', '~> 3.4.1'
 gem 'search_cop'
 gem 'pagy'
+gem 'activerecord-import'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
