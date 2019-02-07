@@ -30,6 +30,6 @@ class Api::V1::UserProfile::UserSerializer < ActiveModel::Serializer
   end
 
   def status
-    object.current_state
+    object.status
   end
 end

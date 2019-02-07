@@ -93,21 +93,4 @@ class User < ApplicationRecord
     self.otp_required_for_login = true
     self.otp_secret = User.generate_otp_secret
   end
-
-  def state_machine
-    @state_machine ||= UserStateMachine.new(self, transition_class: UserTransition)
-  end
-
-  def self.transition_class
-    UserTransition
-  end
-
-  def self.initial_state
-    :enabled
-  end
-
-  private_class_method :initial_state
-
-  delegate :can_transition_to?, :transition_to!, :transition_to, :current_state,
-           to: :state_machine
 end
