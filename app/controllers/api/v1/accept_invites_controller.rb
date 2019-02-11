@@ -1,7 +1,6 @@
 class Api::V1::AcceptInvitesController < ApplicationController
   def index
-    user = User.find_by(invitation_token: invitation_token_from_params)
-
+    user = User.find_by_invitation_token(invitation_token_from_params, true)
     if user.present?
       result = AcceptInvitePageData.new(user: user).call
 
