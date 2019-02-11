@@ -3,18 +3,21 @@ class Api::V1::UsersController < ApplicationController
   load_and_authorize_resource :user
 
   def index
-    result = UsersPageData.new.all
+    result = UsersPageData.new(params: filter_params).all
+    pagination = Pagination.new(records: result.users, current_page: page_from_params).for_load_more
     if result.success?
       render json: {
         users: ActiveModel::Serializer::CollectionSerializer.new(
-          result.users,
+          pagination[:records],
           serializer: Api::V1::Users::UserSerializer,
         ),
         roles: result.roles,
+        statuses: result.statuses,
         venues: ActiveModel::Serializer::CollectionSerializer.new(
           result.venues,
           serializer: Api::V1::Users::VenueSerializer,
         ),
+        pagination: pagination[:pagination],
       }, status: 200
     end
   end
@@ -102,7 +105,7 @@ class Api::V1::UsersController < ApplicationController
     }.merge(query_params)
   end
 
-  def query_params
+  def filter_params
     request.query_parameters
   end
 
@@ -135,6 +138,10 @@ class Api::V1::UsersController < ApplicationController
     {
       id: params.fetch(:id)
     }
+  end
+
+  def page_from_params
+    filter_params[:page] || 1
   end
 
   def current_ability
