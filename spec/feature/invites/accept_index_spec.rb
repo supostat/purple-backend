@@ -4,13 +4,11 @@ RSpec.describe 'Accepting invite index endpoint' do
   include Rack::Test::Methods
 
   let(:url) { url_helpers.api_v1_accept_invites_path(params) }
-  let(:inviter) { FactoryBot.create(:user) }
+  let(:inviter) { FactoryBot.create(:user, :admin) }
   let(:invited_user_venue) { FactoryBot.create(:venue).id }
-  let(:mock_invitiation_delivery_service) { double("mock_invitiation_delivery_service") }
   let(:created_by_invite_result) do
     _result = CreateInvite.new(
       inviter: inviter,
-      invitiation_delivery_service: mock_invitiation_delivery_service,
     ).call(params: {
       email: 'fake@shake.com',
       first_name: 'fake',
@@ -25,11 +23,10 @@ RSpec.describe 'Accepting invite index endpoint' do
     created_by_invite_result.invited_user
   end
   let(:invitation_token) do
-    user.invitation_token
+    user.raw_invitation_token
   end
 
   before do
-    allow(mock_invitiation_delivery_service).to receive(:call)
     user
   end
 
@@ -61,8 +58,7 @@ RSpec.describe 'Accepting invite index endpoint' do
         end
 
         it 'should supply QR code and user data' do
-          response_json = JSON.parse(response.body)
-
+          response_json = body_as_json(response.body)
           expect(response_json).to eq({
             "base64Png" => Base64QrCodeFromString.call(string: user_tfo_uri),
             "invitedUser" => {

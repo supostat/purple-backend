@@ -13,13 +13,11 @@ RSpec.describe 'Accept invite endpoint' do
       passwordConfirmation: password_confirmation,
     }
   end
-  let(:inviter) { FactoryBot.create(:user) }
+  let(:inviter) { FactoryBot.create(:user, :admin) }
   let(:invited_user_venue) { FactoryBot.create(:venue) }
-  let(:mock_invitiation_delivery_service) { double("mock_invitiation_delivery_service") }
   let(:invite_user_response) do
     CreateInvite.new(
       inviter: inviter,
-      invitiation_delivery_service: mock_invitiation_delivery_service,
     ).call(params: {
       email: 'fake@shake.com',
       first_name: 'fake',
@@ -35,7 +33,6 @@ RSpec.describe 'Accept invite endpoint' do
   let(:password_confirmation) { password }
 
   before do
-    allow(mock_invitiation_delivery_service).to receive(:call)
     user
     auth_code
     invitation_token

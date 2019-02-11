@@ -8,16 +8,14 @@ RSpec.describe 'Revoke invite endpoint' do
   let(:response) { post(url, params)}
   let(:perform_call) { response }
   let(:params) { {} }
-  let(:inviter) { FactoryBot.create(:user, roles: [admin_role]) }
+  let(:inviter) { FactoryBot.create(:user, :admin) }
   let(:invited_user_venue) { FactoryBot.create(:venue) }
-  let(:mock_invitiation_delivery_service) { double("mock_invitiation_delivery_service") }
   let(:manager_role) { Role.create!(name: Role::MANAGER_ROLE) }
   let(:admin_role) { Role.create!(name: Role::ADMIN_ROLE) }
   let(:seed_roles) { [admin_role, manager_role]}
 
   before do
     seed_roles
-    allow(mock_invitiation_delivery_service).to receive(:call)
     set_authorization_header(inviter)
   end
 
@@ -25,7 +23,6 @@ RSpec.describe 'Revoke invite endpoint' do
     let(:invite_user_response) do
       _result = CreateInvite.new(
         inviter: inviter,
-        invitiation_delivery_service: mock_invitiation_delivery_service,
       ).call(params: {
         email: 'fake@shake.com',
         first_name: 'fake',
@@ -64,8 +61,11 @@ RSpec.describe 'Revoke invite endpoint' do
         end
 
         specify 'should return empty response' do
-          response_json = JSON.parse(response.body)
-          expect(response_json).to eq({})
+          expect_any_instance_of(Api::V1::Invites::InvitedUserSerializer).to receive(:as_json).and_call_original
+
+          response_json = body_as_json(response.body)
+          invited_user = response_json.fetch(:invitedUser)
+          expect(invited_user.fetch(:id)).to eq(user.id)
         end
 
         specify 'user should be revoked' do
