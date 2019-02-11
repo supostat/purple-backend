@@ -60,7 +60,7 @@ RSpec.describe "UserProfileHistoryQuery" do
   end
 
   describe "with start and end date, all records in range" do
-    let(:params) { {id: user.id, starts_at: UIDate.format(now - 90.days), ends_at: UIDate.format(now)} }
+    let(:params) { {id: user.id, start_date: UIDate.format(now - 90.days), end_date: UIDate.format(now)} }
 
     it "result should have a history" do
       make_user_changes
@@ -69,7 +69,7 @@ RSpec.describe "UserProfileHistoryQuery" do
   end
 
   describe "with start and end date, some records in range" do
-    let(:params) { {id: user.id, starts_at: UIDate.format(now - 40.days), ends_at: UIDate.format(now)} }
+    let(:params) { {id: user.id, start_date: UIDate.format(now - 40.days), end_date: UIDate.format(now)} }
 
     it "result should have a history" do
       make_user_changes
@@ -78,7 +78,7 @@ RSpec.describe "UserProfileHistoryQuery" do
   end
 
   describe "with start and end date, no records in range" do
-    let(:params) { {id: user.id, starts_at: UIDate.format(now - 200.days), ends_at: UIDate.format(now - 100.days)} }
+    let(:params) { {id: user.id, start_date: UIDate.format(now - 200.days), end_date: UIDate.format(now - 100.days)} }
 
     it "result should not have a history" do
       make_user_changes
@@ -87,7 +87,7 @@ RSpec.describe "UserProfileHistoryQuery" do
   end
 
   describe "when starts_at only exist" do
-    let(:params) { {id: user.id, starts_at: UIDate.format(now - 200.days)} }
+    let(:params) { {id: user.id, start_date: UIDate.format(now - 200.days)} }
 
     it "result should have a history" do
       make_user_changes
@@ -96,7 +96,7 @@ RSpec.describe "UserProfileHistoryQuery" do
   end
 
   describe "when ends_at only exist" do
-    let(:params) { {id: user.id, ends_at: UIDate.format(now)} }
+    let(:params) { {id: user.id, end_date: UIDate.format(now)} }
 
     it "result should have a history" do
       make_user_changes
