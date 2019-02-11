@@ -1,5 +1,5 @@
 class UserHistoryService
-  SKIPPED_ATTRIBUTES = ["updated_at", "created_at", "id"]
+  SKIPPED_ATTRIBUTES = ["updated_at", "created_at", "id", "reset_password_token", "reset_password_sent_at"]
 
   def initialize(user: , requester:)
     @old_work_venues = get_venues(venues: user.work_venues)
