@@ -23,7 +23,7 @@ RSpec.describe "InvitesIndexQuery" do
     end
 
     context 'user exists from invite' do
-      let(:non_invite_user) { FactoryBot.create(:user) }
+      let(:non_invite_user) { FactoryBot.create(:user, :admin) }
       let(:dummy_delivery_service) { double('invite delivery_service')}
       let(:venue) { FactoryBot.create(:venue) }
       let(:invite_user) do
@@ -70,7 +70,7 @@ RSpec.describe "InvitesIndexQuery" do
     let(:params) { {role: filter_role} }
 
     context 'invited staff member exists' do
-      let(:non_invite_user) { FactoryBot.create(:user) }
+      let(:non_invite_user) { FactoryBot.create(:user, :admin) }
       let(:dummy_delivery_service) { double('invite delivery_service')}
       let(:venue) { FactoryBot.create(:venue) }
       let(:invite_user) do
@@ -143,7 +143,7 @@ RSpec.describe "InvitesIndexQuery" do
     let(:params) { { email: filter_email } }
 
     context 'invited staff member exists' do
-      let(:non_invite_user) { FactoryBot.create(:user) }
+      let(:non_invite_user) { FactoryBot.create(:user, :admin) }
       let(:dummy_delivery_service) { double('invite delivery_service')}
       let(:venue) { FactoryBot.create(:venue) }
       let(:invite_user) do
@@ -212,7 +212,7 @@ RSpec.describe "InvitesIndexQuery" do
     let(:params) { { venues: [filter_venue] } }
 
     context 'invited staff member exists' do
-      let(:non_invite_user) { FactoryBot.create(:user) }
+      let(:non_invite_user) { FactoryBot.create(:user, :admin) }
       let(:dummy_delivery_service) { double('invite delivery_service')}
       let(:venue) { FactoryBot.create(:venue) }
       let(:invite_user) do
@@ -283,7 +283,7 @@ RSpec.describe "InvitesIndexQuery" do
     let(:params) { { status: filter_status } }
 
     context 'invited staff member exists' do
-      let(:non_invited_user) { FactoryBot.create(:user) }
+      let(:non_invited_user) { FactoryBot.create(:user, :admin) }
       let(:dummy_delivery_service) { double('invite delivery_service')}
       let(:invited_user_params) do
         {
