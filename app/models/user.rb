@@ -61,7 +61,7 @@ class User < ApplicationRecord
   validates :email, presence: true
   validate :one_role
   validates :disabled_by_user, :disabled_at, :disabled_reason, presence: true, if: :any_of_disabled_present?
-  validates :would_rehire, inclusion: { in: [true, false], message: 'is required' }
+  validates :would_rehire, inclusion: {in: [true, false], message: "is required"}
 
   # validates :invitation_revoked_at, presence: true, if: :invitation_token.empty?
 
@@ -71,7 +71,7 @@ class User < ApplicationRecord
   # validation
   def one_role
     if roles.length != 1
-      errors.add(:roles, 'must have one role')
+      errors.add(:roles, "must have one role")
     end
   end
 
@@ -112,7 +112,7 @@ class User < ApplicationRecord
   end
 
   def jwt_payload
-    super.merge({"firstName" => first_name, "surname" => surname})
+    super.merge({"firstName" => first_name, "surname" => surname, "role" => role})
   end
 
   def two_factor_code_match
