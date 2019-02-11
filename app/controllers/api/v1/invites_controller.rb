@@ -46,7 +46,9 @@ class Api::V1::InvitesController < ApplicationController
   def revoke
     invited_user = User.find_by!(id: params.fetch(:id))
     RevokeInvite.new(invited_user: invited_user, requester: current_user).call
-    render json: {}, status: :ok
+    render json: {
+      invitedUser: Api::V1::Invites::InvitedUserSerializer.new(invited_user)
+    }, status: :ok
   end
 
   def current_ability
