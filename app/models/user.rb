@@ -33,6 +33,10 @@ class User < ApplicationRecord
     attributes :email
   end
 
+  search_scope :search_name do
+    attributes :first_name, :surname
+  end
+
   before_invitation_created :enable_two_factor_auth
 
   has_and_belongs_to_many :work_venues, class_name: "Venue", :join_table => :users_venues
