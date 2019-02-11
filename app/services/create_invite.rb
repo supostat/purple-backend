@@ -5,12 +5,15 @@ class CreateInvite
     end
   end
 
-  def initialize(inviter: nil, invitiation_delivery_service: DeliverInviteEmail.new)
+  def initialize(inviter: nil, invitiation_delivery_service: DeliverInviteEmail.new, ability: InvitesAbility.new(inviter))
     @inviter = inviter
     @invitiation_delivery_service = invitiation_delivery_service
+    @ability = ability
   end
 
   def call(params:)
+    ability.authorize!(:create, User, :message => "Unable to create invite.")
+
     invited_user = nil
     success = false
     api_errors = nil
@@ -40,7 +43,7 @@ class CreateInvite
     end
 
     unless success == true
-      api_errors = CreateInviteApiErrors.new(invited_user: invited_user, role: role)
+      api_errors = CreateInviteApiErrors.new(invited_user: invited_user)
     end
 
     Result.new(success, invited_user, role, api_errors)
@@ -48,5 +51,5 @@ class CreateInvite
 
   private
 
-  attr_reader :inviter, :invitiation_delivery_service
+  attr_reader :inviter, :invitiation_delivery_service, :ability
 end
