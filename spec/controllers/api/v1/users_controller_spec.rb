@@ -44,7 +44,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
       end
 
       it "correct user attributes are rendered" do
-        expect_any_instance_of(Api::V1::Users::UserSerializer).to receive(:as_json).and_call_original
+        expect_any_instance_of(Api::V1::UserProfile::UserSerializer).to receive(:as_json).and_call_original
         trigger
         user_id = body_as_json
           .fetch(:user)
@@ -117,7 +117,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
       end
 
       it "correct user attributes are rendered" do
-        expect_any_instance_of(Api::V1::Users::UserSerializer).to receive(:as_json).and_call_original
+        expect_any_instance_of(Api::V1::UserProfile::UserSerializer).to receive(:as_json).and_call_original
         trigger
         user_id = body_as_json
           .fetch(:user)
@@ -214,7 +214,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
       end
 
       it "correct user attributes are rendered" do
-        expect_any_instance_of(Api::V1::Users::UserSerializer).to receive(:as_json).and_call_original
+        expect_any_instance_of(Api::V1::UserProfile::UserSerializer).to receive(:as_json).and_call_original
         trigger
         user_id = body_as_json
           .fetch(:user)
@@ -278,7 +278,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
       end
 
       it "correct user attributes are rendered" do
-        expect_any_instance_of(Api::V1::Users::UserSerializer).to receive(:as_json).and_call_original
+        expect_any_instance_of(Api::V1::UserProfile::UserSerializer).to receive(:as_json).and_call_original
         trigger
         user_id = body_as_json
           .fetch(:user)
