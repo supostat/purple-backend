@@ -19,6 +19,13 @@ class User < ApplicationRecord
   DISABLED_STATUS = "disabled"
   ENABLED_STATUS = "enabled"
 
+  STATUSES = [DISABLED_STATUS, ENABLED_STATUS]
+
+  STATUSES_TEXT = {
+    DISABLED_STATUS => "Disabled",
+    ENABLED_STATUS => "Enabled",
+  }
+
   devise :two_factor_authenticatable,
          :invitable,
          :validatable,
