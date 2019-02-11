@@ -1,9 +1,8 @@
 class Api::V1::InvitesController < ApplicationController
   before_action :authenticate_user!
+  load_and_authorize_resource :user
 
   def index
-    current_ability.authorize!(:view, :invites_index)
-
     result = InvitesPageData.new(params: filter_params).all
     pagination = Pagination.new(records: result.invited_users, current_page: page_from_params).for_load_more
     if result.success?
@@ -24,8 +23,6 @@ class Api::V1::InvitesController < ApplicationController
   end
 
   def create
-    current_ability.authorize!(:create_invites)
-
     result = CreateInvite.new(inviter: current_user).call(params: invited_user_params)
 
     if result.success?
