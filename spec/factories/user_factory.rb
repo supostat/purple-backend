@@ -10,6 +10,15 @@ FactoryBot.define do
     password { "password" }
     password_confirmation { "password" }
 
+    after :create do |user|
+      # For Two Factor Auth we need to generate otp_secret
+      # Then we can get `user.current_otp` code from the user model
+      # It's like the user already scan his QR code on GoogleAuthenticator
+      # and receiving the codes to sign in
+      user.otp_secret = user.class.generate_otp_secret
+      user.consumed_timestep = nil
+    end
+
     before :create do |user, evaluator|
       # prefer explictly roles setting
       if user.roles.present? && evaluator.role.present?
@@ -39,7 +48,11 @@ FactoryBot.define do
     end
 
     trait :disabled do
-      after(:create) {|user| user.update({disabled_at: Time.current, disabled_by_user: FactoryBot.create(:user)})}
+      after(:build) {|user| user.update({
+        disabled_reason: "Reason",
+        disabled_at: Time.current,
+        disabled_by_user: FactoryBot.create(:user)
+      })}
     end
   end
 end
