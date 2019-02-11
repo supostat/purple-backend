@@ -66,7 +66,7 @@ class User < ApplicationRecord
   # validates :invitation_revoked_at, presence: true, if: :invitation_token.empty?
 
   attr_accessor :auth_code
-  attr_reader :accepting_invitation
+  attr_reader :accepting_invitation, :raw_invitation_token
 
   # validation
   def one_role
