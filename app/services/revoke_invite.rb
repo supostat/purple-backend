@@ -7,7 +7,7 @@ class RevokeInvite
   attr_reader :invited_user, :ability, :requester
 
   def call(now: Time.current)
-    ability.authorize!(:revoke_invite, invited_user)
+    ability.authorize!(:revoke, invited_user)
 
     raise self.class.invite_already_revoked_error_message(invited_user) if invited_user.invitation_revoked?
     raise self.class.invite_already_accepted_error_message(invited_user) if invited_user.invitation_accepted?
