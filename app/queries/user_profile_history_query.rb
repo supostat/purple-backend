@@ -5,17 +5,16 @@ class UserProfileHistoryQuery
 
   def all(order: :desc)
     user_id = params.fetch(:id)
-    starts_at = UIDate.safe_parse(params[:starts_at])
-    ends_at = UIDate.safe_parse(params[:ends_at])
+    start_date = UIDate.safe_parse(params[:start_date])
+    end_date = UIDate.safe_parse(params[:end_date])
     user = User.find_by(id: user_id)
-
-    query = user.history.order(created_at: order)
-    if starts_at.present? && ends_at.present?
-      query.where("created_at >= ? AND created_at <= ?", starts_at, ends_at)
-    elsif starts_at.present?
-      query.where("created_at >= ?", starts_at)
-    elsif ends_at.present?
-      query.where("created_at <= ?", ends_at)
+    query = user.history.includes([:requester_user]).order(created_at: order)
+    if start_date.present? && end_date.present?
+      query.where("created_at >= ? AND created_at <= ?", start_date.beginning_of_day, end_date.end_of_day)
+    elsif start_date.present?
+      query.where("created_at >= ?", start_date.beginning_of_day)
+    elsif end_date.present?
+      query.where("created_at <= ?", end_date.end_of_day)
     else
       query
     end
