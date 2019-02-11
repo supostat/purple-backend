@@ -18,7 +18,7 @@ class Api::V1::Users::UserSerializer < ActiveModel::Serializer
   end
 
   def role
-    object.roles_name[0]
+    object.role
   end
 
   def firstName
