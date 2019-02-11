@@ -82,8 +82,9 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
-  config.action_mailer.default_url_options = { :host => 'https://boss-purple-frontend.herokuapp.com' }
+  config.action_mailer.default_url_options = { host: ENV['HTTP_HOST'] || 'https://boss-purple-frontend.herokuapp.com' }
   config.action_mailer.delivery_method = :smtp
+
   config.action_mailer.smtp_settings = {
     :user_name => "42a61b3469a4c4",
     :password => "bfc00d2a2f23e6",
