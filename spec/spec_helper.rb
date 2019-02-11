@@ -16,8 +16,12 @@
 Dir["./spec/support/custom_matchers/**/*.rb"].each { |f| require f}
 
 RSpec.configure do |config|
-  def body_as_json
-    json_str_to_hash(response.body)
+  def body_as_json(body = nil)
+    if body.present?
+      json_str_to_hash(body)
+    else
+      json_str_to_hash(response.body)
+    end
   end
 
   def json_str_to_hash(str)
