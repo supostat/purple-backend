@@ -86,10 +86,10 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :smtp
 
   config.action_mailer.smtp_settings = {
-    :user_name => "42a61b3469a4c4",
-    :password => "bfc00d2a2f23e6",
-    :address => "smtp.mailtrap.io",
-    :domain => "smtp.mailtrap.io",
+    :user_name => ENV.fetch("SMTP_USER_NAME"),
+    :password => ENV.fetch("SMTP_USER_PASSWORD"),
+    :address => ENV.fetch("SMTP_ADDRESS"),
+    :domain => ENV.fetch("SMTP_DOMAIN"),
     :port => "2525",
     :authentication => :cram_md5,
   }
