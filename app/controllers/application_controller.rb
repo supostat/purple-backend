@@ -4,7 +4,7 @@ class ApplicationController < ActionController::API
   rescue_from ActiveRecord::RecordInvalid, with: :render_server_error_response
 
   rescue_from CanCan::AccessDenied do |exception|
-    head :forbidden, content_type: 'application/json'
+    render json: {message: exception.message}, status: 403
   end
 
   def render_resource(resource)
