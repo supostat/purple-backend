@@ -37,6 +37,9 @@ class User < ApplicationRecord
     attributes :first_name, :surname
   end
 
+  scope :enabled, -> { where({disabled_by_user: nil, disabled_at: nil}) }
+  scope :disabled, -> { where.not({disabled_by_user: nil, disabled_at: nil}) }
+
   before_invitation_created :enable_two_factor_auth
 
   has_and_belongs_to_many :work_venues, class_name: "Venue", :join_table => :users_venues
