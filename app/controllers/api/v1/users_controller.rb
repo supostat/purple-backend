@@ -49,7 +49,7 @@ class Api::V1::UsersController < ApplicationController
     result = UpdateUserPersonalDetails.new(requester: current_user).call(params: update_personal_details_params)
     if result.success?
       render json: {
-        user: Api::V1::Users::UserSerializer.new(result.user),
+        user: Api::V1::UserProfile::UserSerializer.new(result.user),
       }, status: 200
     else
       render json: {
@@ -62,7 +62,7 @@ class Api::V1::UsersController < ApplicationController
     result = UpdateUserAccessDetails.new(requester: current_user).call(params: update_access_details_params)
     if result.success?
       render json: {
-        user: Api::V1::Users::UserSerializer.new(result.user),
+        user: Api::V1::UserProfile::UserSerializer.new(result.user),
       }, status: 200
     else
       render json: {
@@ -75,7 +75,7 @@ class Api::V1::UsersController < ApplicationController
     result = DisableUser.new(requester: current_user).call(params: disable_params)
     if result.success?
       render json: {
-        user: Api::V1::Users::UserSerializer.new(result.user),
+        user: Api::V1::UserProfile::UserSerializer.new(result.user),
       }, status: 200
     else
       render json: {
@@ -88,7 +88,7 @@ class Api::V1::UsersController < ApplicationController
     result = EnableUser.new.call(params: enable_params)
     if result.success?
       render json: {
-        user: Api::V1::Users::UserSerializer.new(result.user),
+        user: Api::V1::UserProfile::UserSerializer.new(result.user),
       }, status: 200
     else
       render json: {
@@ -102,7 +102,9 @@ class Api::V1::UsersController < ApplicationController
   def history_params
     {
       id: params.fetch(:id),
-    }.merge(query_params)
+      start_date: filter_params["start_date"],
+      end_date: filter_params["end_date"],
+    }
   end
 
   def filter_params
