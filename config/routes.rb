@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   default_url_options :host => ENV["HTTP_HOST"] || "localhost:8080"
   devise_for :users,
     skip: [:passwords],
+    skip: [:invitation],
     defaults: {format: :json},
     path: "",
     path_names: {
@@ -16,6 +17,7 @@ Rails.application.routes.draw do
 
   as :user do
     get "reset-password", :to => "devise/passwords#edit"
+    get "accept-invite/:token", :to => "devise/invitations#edit", :as => "accept_invite"
   end
 
   namespace :api do
