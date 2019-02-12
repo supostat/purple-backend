@@ -9,7 +9,7 @@ class Api::V1::Invites::InvitedUserSerializer < ActiveModel::Serializer
     :inviterFullName
 
   def invitedAt
-    object.invitation_sent_at.iso8601
+    object.invitation_sent_at&.iso8601
   end
 
   def venuesIds
